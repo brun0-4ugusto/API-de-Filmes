@@ -1,38 +1,93 @@
 const database = require("../models");
 const axios = require("axios");
+const Sequelize = require("sequelize");
+const { Op } = Sequelize;
 
 class LeitorController {
-    static async #buscarFilmesApi(titulo, imdbID,search){
+    static async #buscarFilmesApi(titulo, imdbID, search) {
         const resp = await axios.get(`https://www.omdbapi.com/`, {
-                params: {
-                    t: titulo,
-                    i: imdbID,
-                    s: search,
-                    apikey: "cee96c18",
-                },
-            });
+            params: {
+                t: titulo,
+                i: imdbID,
+                s: search,
+                apikey: "cee96c18",
+            },
+        });
 
-            return resp
+        return resp;
     }
 
-    static async #filmesComentarios(titulo,imdbID){
+    static async #filmesInteraçoes(titulo = "", imdbID = 0) {
+        const comentarios = await database.filmes.findAll({
+            where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
+            attributes: { exclude: ["imdbID"] },
+        });
 
+        const notas = await database.notas.findAll({
+            where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
+            attributes: { exclude: ["imdbID"] },
+        });
+
+        return { comentarios: comentarios, notas: notas };
     }
 
     static async buscarFilmes(req, res) {
         try {
-            const resp = await LeitorController.#buscarFilmesApi(req.query.titulo,req.query.id,req.query.search);
-
+            const resp = await LeitorController.#buscarFilmesApi(
+                req.query.titulo,
+                req.query.id,
+                req.query.search
+            );
+            const interacoes = await LeitorController.#filmesInteraçoes(
+                req.query.titulo,
+                req.query.id
+            );
             return res.status(resp.status).json({
-                message: resp.data,
+                info: resp.data,
+                interações: interacoes,
             });
         } catch (err) {
-            return res.status(500);
+            return res.status(500).send();
         }
     }
 
-    static async darNota(){
-        
+    static async #atualizaPonto(autor) {
+        try {
+            const pontuaçaoLinha = await database.usuarios.findAll({
+                where: { email: autor },attributes:["pontos"]
+            })
+            let pontos = Number(pontuaçaoLinha[0].dataValues.pontos)
+            pontos +=1
+            
+            await database.usuarios.update({pontos:pontos}, {
+                where: { email: autor }
+            })
+            
+
+        } catch (error) {}
+    }
+
+    static async darNota(req, res) {
+        try {
+            const buscaFilmes = await LeitorController.#buscarFilmesApi(
+                "",
+                req.query.id
+            );
+            const tituloFilme = buscaFilmes.data.Title;
+
+            const nota = await database.notas.create({
+                titulo: tituloFilme,
+                nota: req.body.nota,
+                imdbID: req.query.id,
+                autor: req.body.autor,
+            });
+            await LeitorController.#atualizaPonto(req.body.autor)
+            return res.status(200).json({
+                message: nota,
+            });
+        } catch (err) {
+            return res.status(500).send();
+        }
     }
 }
 

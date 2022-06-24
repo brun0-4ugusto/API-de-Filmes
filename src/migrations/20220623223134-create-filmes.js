@@ -1,21 +1,21 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Filmes', {
+    await queryInterface.createTable('filmes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Autor:{
+      autor:{
         allowNull: false,
         type: Sequelize.STRING,
         references:{model: 'usuarios', key: 'email'}
       },
       imdbID:{
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       titulo: {
         type: Sequelize.STRING,
@@ -24,10 +24,6 @@ module.exports = {
       comentario: {
         type: Sequelize.TEXT,
         allowNull: false,
-      },
-      nota: {
-        type: Sequelize.INTEGER,
-        defaultValue: 5
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Filmes');
+    await queryInterface.dropTable('filmes');
   }
 };

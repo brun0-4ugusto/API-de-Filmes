@@ -11,9 +11,10 @@ class UsuarioController {
     static async cadastrarUsuario(req, res) {
         
         const { nome, email, senha } = req.body;
-        const senhaHasheada = await UsuarioController.#gerarSenhaHash(senha)
+        
 
         try {
+            const senhaHasheada = await UsuarioController.#gerarSenhaHash(senha)
             const checagemEmailDuplicado = await database.usuarios.findOne({
                 where: { email: email },
             });
