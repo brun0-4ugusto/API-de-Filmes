@@ -2,14 +2,16 @@ const database = require("../models");
 const bcrypt = require("bcrypt");
 
 class UsuarioController {
-    static gerarSenhaHash(senha) {
+
+    static #gerarSenhaHash(senha) {
         const custo = 12;
         return bcrypt.hash(senha, custo);
     }
+
     static async cadastrarUsuario(req, res) {
         
         const { nome, email, senha } = req.body;
-        const senhaHasheada = await UsuarioController.gerarSenhaHash(senha)
+        const senhaHasheada = await UsuarioController.#gerarSenhaHash(senha)
 
         try {
             const checagemEmailDuplicado = await database.usuarios.findOne({
@@ -26,7 +28,7 @@ class UsuarioController {
                 return res.status(400).json("Usuário já cadastrado");
             }
         } catch (err) {
-            return res.status();
+            return res.status(500);
         }
     }
 
