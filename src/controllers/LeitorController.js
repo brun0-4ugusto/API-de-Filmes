@@ -57,7 +57,13 @@ class LeitorController {
                 where: { email: autor },
                 attributes: ["pontos"],
             });
+            
             let pontos = Number(pontuaçaoLinha[0].dataValues.pontos);
+            if(pontos == 19){
+                await database.usuarios.update({funcao:"Basico"},{where:{
+                    email: autor
+                }})
+            }
             pontos += 1;
 
             await database.usuarios.update(
