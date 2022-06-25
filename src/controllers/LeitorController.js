@@ -17,7 +17,7 @@ class LeitorController {
         return resp;
     }
 
-    static async #filmesInteraçoes(titulo = "", imdbID = 0) {
+    static async #filmesInteraçoes(titulo = "", imdbID = null) {
         const comentarios = await database.filmes.findAll({
             where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
             attributes: { exclude: ["imdbID"] },
@@ -54,16 +54,18 @@ class LeitorController {
     static async #atualizaPonto(autor) {
         try {
             const pontuaçaoLinha = await database.usuarios.findAll({
-                where: { email: autor },attributes:["pontos"]
-            })
-            let pontos = Number(pontuaçaoLinha[0].dataValues.pontos)
-            pontos +=1
-            
-            await database.usuarios.update({pontos:pontos}, {
-                where: { email: autor }
-            })
-            
+                where: { email: autor },
+                attributes: ["pontos"],
+            });
+            let pontos = Number(pontuaçaoLinha[0].dataValues.pontos);
+            pontos += 1;
 
+            await database.usuarios.update(
+                { pontos: pontos },
+                {
+                    where: { email: autor },
+                }
+            );
         } catch (error) {}
     }
 
@@ -75,16 +77,27 @@ class LeitorController {
             );
             const tituloFilme = buscaFilmes.data.Title;
 
-            const nota = await database.notas.create({
-                titulo: tituloFilme,
-                nota: req.body.nota,
-                imdbID: req.query.id,
-                autor: req.body.autor,
+            const jaAvaliou = await database.notas.findOne({
+                where: {
+                    imdbID: req.query.id,
+                    autor:req.body.autor
+                },
             });
-            await LeitorController.#atualizaPonto(req.body.autor)
-            return res.status(200).json({
-                message: nota,
-            });
+
+            if (jaAvaliou == undefined) {
+                const nota = await database.notas.create({
+                    titulo: tituloFilme,
+                    nota: req.body.nota,
+                    imdbID: req.query.id,
+                    autor: req.body.autor,
+                });
+                await LeitorController.#atualizaPonto(req.body.autor);
+                return res.status(200).json({
+                    message: nota,
+                });
+            } else {
+                return res.status(400).send("Nota ja foi adicionada");
+            }
         } catch (err) {
             return res.status(500).send();
         }

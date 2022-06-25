@@ -10,18 +10,21 @@ module.exports = {
             },
             titulo: {
                 type: Sequelize.STRING,
+                allowNull: false,
             },
             autor: {
                 allowNull: false,
                 type: Sequelize.STRING,
                 references: { model: "usuarios", key: "email" },
-                unique: true,
+                
             },
             nota: {
                 type: Sequelize.INTEGER,
+                allowNull: false,
             },
             imdbID: {
                 type: Sequelize.STRING,
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,

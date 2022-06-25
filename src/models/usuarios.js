@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             usuarios.hasMany(models.filmes,{
               foreignKey:'autor'
             });
-            usuarios.hasOne(models.notas,{
+            usuarios.hasMany(models.notas,{
                 foreignKey:'autor'
               });
         }
