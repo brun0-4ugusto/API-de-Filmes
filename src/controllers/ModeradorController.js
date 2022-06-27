@@ -1,8 +1,10 @@
+const { existeUsuario, existeComentario } = require("../helpers/verificacoes");
 const database = require("../models");
 
 class ModeradorController {
     static async darMod(req, res) {
         try {
+            await existeUsuario(req.body.email)
             await database.usuarios.update(
                 {
                     funcao: "Moderador",
@@ -19,10 +21,12 @@ class ModeradorController {
 
     static async excluirComentario(req, res) {
         try {
+            await existeComentario(req.params.id)
+            await database.respostas.destroy({where:{idComentario:req.params.id}})
             await database.filmes.destroy({ where: { id: req.params.id } });
             return res
                 .status(200)
-                .send(`O comentário ${req.params.id} foi deletados`);
+                .send(`O comentário ${req.params.id} foi deletado`);
         } catch (error) {
             return res.status(500).send(error);
         }
@@ -30,6 +34,7 @@ class ModeradorController {
 
     static async marcarRepetido(req,res){
         try {
+            await existeComentario(req.params.id)
             await database.filmes.update({repetido:1},{where:{id:req.params.id}})
             return res
             .status(200)

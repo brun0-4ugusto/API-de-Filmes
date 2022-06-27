@@ -28,7 +28,9 @@ class LeitorController {
             where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
             attributes: { exclude: ["imdbID"] },
         });
-
+        if(comentarios.length == 0 && notas.length == 0){
+            return "Especifique o filme com o imdbID ou título"
+        }
         return { comentarios: comentarios, notas: notas };
     }
 
@@ -78,6 +80,9 @@ class LeitorController {
 
     static async darNota(req, res) {
         try {
+            if(req.body.nota > 5 || req.body.nota < 0){
+                return res.status(400).send("Nota tem que ser entre 0 e 5")
+            }
             const buscaFilmes = await LeitorController._buscarFilmesApi(
                 "",
                 req.query.id

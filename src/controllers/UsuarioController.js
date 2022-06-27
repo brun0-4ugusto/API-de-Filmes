@@ -1,20 +1,21 @@
 const database = require("../models");
 const bcrypt = require("bcrypt");
 
-class UsuarioController {
 
+class UsuarioController {
     static #gerarSenhaHash(senha) {
         const custo = 12;
         return bcrypt.hash(senha, custo);
     }
 
-    static async cadastrarUsuario(req, res) {
-        
+    static async cadastrarUsuario(req, res, next) {
         const { nome, email, senha } = req.body;
-        
 
         try {
-            const senhaHasheada = await UsuarioController.#gerarSenhaHash(senha)
+            if (senha.length < 4) {
+                return res.status(400).send("Senha Não Condiz Com Requisítos Mínimos");
+            }
+            const senhaHasheada = await UsuarioController.#gerarSenhaHash(senha);
             const checagemEmailDuplicado = await database.usuarios.findOne({
                 where: { email: email },
             });
@@ -26,14 +27,12 @@ class UsuarioController {
                 });
                 return res.status(201).json(novoUsuarioCriado);
             } else {
-                return res.status(400).json("Usuário já cadastrado");
+                return res.status(400).send("Usuário já cadastrado");
             }
         } catch (err) {
             return res.status(500);
         }
     }
-
-    
 }
 
 module.exports = UsuarioController;

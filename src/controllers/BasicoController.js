@@ -24,6 +24,12 @@ class BasicoController {
                 message: comentario,
             });
         } catch (error) {
+            if(error.parent.errno == 1364){
+                return res.status(400).send("Filme não encontrado verifique o imdbID");
+            }
+            if(error.parent.errno == 1452){
+                return res.status(400).send("Parâmetros enviados errados");
+            }
             return res.status(500).send(error);
         }
     }
@@ -41,6 +47,9 @@ class BasicoController {
                 message: resposta,
             });
         } catch (error) {
+            if(error.parent.errno == 1452){
+                return res.status(400).send("Parâmetros enviados errados");
+            }
             return res.status(500).send(error);
         }
     }

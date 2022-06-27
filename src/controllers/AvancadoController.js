@@ -1,19 +1,25 @@
+const { existeComentario, existeUsuario } = require("../helpers/verificacoes");
 const database = require("../models");
 
 class AvancadoController {
     static async curtir(req, res) {
         try {
+            await existeComentario(req.params.id);
+            await existeUsuario(req.body.votante);
             const temCurtida = await database.filmes.findOne({
                 where: { id: req.params.id },
                 attributes: ["votantes"],
             });
             if (temCurtida.votantes == null) {
-                if(req.body.gostou == "true"){
-                    await database.filmes.update({gostei:1},{where:{ id: req.params.id}})
-                }else if(req.body.gostou == "false"){
-                    await database.filmes.update({naoGostei:1},{where:{ id: req.params.id}})
-                }else{
-                    return res.status(404).send("Parametro errado")
+                if (req.body.gostou == "true") {
+                    await database.filmes.update({ gostei: 1 }, { where: { id: req.params.id } });
+                } else if (req.body.gostou == "false") {
+                    await database.filmes.update(
+                        { naoGostei: 1 },
+                        { where: { id: req.params.id } }
+                    );
+                } else {
+                    return res.status(400).send("Parâmetro errado");
                 }
                 await database.filmes.update(
                     {
@@ -21,8 +27,7 @@ class AvancadoController {
                     },
                     { where: { id: req.params.id } }
                 );
-                
-                
+
                 return res.status(200).send(temCurtida);
             }
 
@@ -45,10 +50,7 @@ class AvancadoController {
                 });
                 let gostei = gosteiLinha.dataValues.gostei;
                 gostei += 1;
-                await database.filmes.update(
-                    { gostei: gostei },
-                    { where: { id: req.params.id } }
-                );
+                await database.filmes.update({ gostei: gostei }, { where: { id: req.params.id } });
             } else if (req.body.gostou == "false") {
                 const naoGosteiLinha = await database.filmes.findOne({
                     where: { id: req.params.id },
