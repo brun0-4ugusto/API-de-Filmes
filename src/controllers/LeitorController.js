@@ -2,9 +2,10 @@ const database = require("../models");
 const axios = require("axios");
 const Sequelize = require("sequelize");
 const { Op } = Sequelize;
+const verificaCargo = require("../helpers/verificacoes");
 
 class LeitorController {
-    static async #buscarFilmesApi(titulo, imdbID, search) {
+    static async _buscarFilmesApi(titulo, imdbID, search) {
         const resp = await axios.get(`https://www.omdbapi.com/`, {
             params: {
                 t: titulo,
@@ -17,7 +18,7 @@ class LeitorController {
         return resp;
     }
 
-    static async #filmesInteraçoes(titulo = "", imdbID = null) {
+    static async _filmesInteraçoes(titulo = "", imdbID = null) {
         const comentarios = await database.filmes.findAll({
             where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
             attributes: { exclude: ["imdbID"] },
@@ -31,14 +32,14 @@ class LeitorController {
         return { comentarios: comentarios, notas: notas };
     }
 
-    static async buscarFilmes(req, res) {
+    static async buscarInteracoes(req, res) {
         try {
-            const resp = await LeitorController.#buscarFilmesApi(
+            const resp = await LeitorController._buscarFilmesApi(
                 req.query.titulo,
                 req.query.id,
                 req.query.search
             );
-            const interacoes = await LeitorController.#filmesInteraçoes(
+            const interacoes = await LeitorController._filmesInteraçoes(
                 req.query.titulo,
                 req.query.id
             );
@@ -51,18 +52,16 @@ class LeitorController {
         }
     }
 
-    static async #atualizaPonto(autor) {
+    static async _atualizaPonto(autor) {
         try {
             const pontuaçaoLinha = await database.usuarios.findAll({
                 where: { email: autor },
                 attributes: ["pontos"],
             });
-            
+
             let pontos = Number(pontuaçaoLinha[0].dataValues.pontos);
-            if(pontos == 19){
-                await database.usuarios.update({funcao:"Basico"},{where:{
-                    email: autor
-                }})
+            if (pontos == 19 || pontos == 99 || pontos == 999) {
+                verificaCargo.atualizaFuncao(autor, pontos);
             }
             pontos += 1;
 
@@ -72,12 +71,14 @@ class LeitorController {
                     where: { email: autor },
                 }
             );
-        } catch (error) {}
+        } catch (error) {
+            return error
+        }
     }
 
     static async darNota(req, res) {
         try {
-            const buscaFilmes = await LeitorController.#buscarFilmesApi(
+            const buscaFilmes = await LeitorController._buscarFilmesApi(
                 "",
                 req.query.id
             );
@@ -86,7 +87,7 @@ class LeitorController {
             const jaAvaliou = await database.notas.findOne({
                 where: {
                     imdbID: req.query.id,
-                    autor:req.body.autor
+                    autor: req.body.autor,
                 },
             });
 
@@ -97,7 +98,7 @@ class LeitorController {
                     imdbID: req.query.id,
                     autor: req.body.autor,
                 });
-                await LeitorController.#atualizaPonto(req.body.autor);
+                await LeitorController._atualizaPonto(req.body.autor);
                 return res.status(200).json({
                     message: nota,
                 });
@@ -105,7 +106,7 @@ class LeitorController {
                 return res.status(400).send("Nota ja foi adicionada");
             }
         } catch (err) {
-            return res.status(500).send();
+            return res.status(500).send(err);
         }
     }
 }

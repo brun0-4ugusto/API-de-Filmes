@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
             usuarios.hasMany(models.notas,{
                 foreignKey:'autor'
               });
+              usuarios.hasMany(models.respostas,{
+                foreignKey:'autor'
+              });
+              
         }
     }
     usuarios.init(
