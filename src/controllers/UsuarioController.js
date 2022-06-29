@@ -3,6 +3,15 @@ const bcrypt = require("bcrypt");
 
 
 class UsuarioController {
+    static async buscaPorUsuario(email) {
+        try {
+            return await database.usuarios.findOne({
+                where: { email: email },
+            });
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
     static #gerarSenhaHash(senha) {
         const custo = 12;
         return bcrypt.hash(senha, custo);

@@ -5,7 +5,7 @@ const leitor = require("./leitorRoute");
 const basico = require("./basicoRoute");
 const avancado = require("./avancadoRoute")
 const moderador = require("./moderadorRoute")
-
+const EstrategiasAutenticacao = require('../autenticacao/autenticacao')
 
 module.exports = (app) => {
     app.use(

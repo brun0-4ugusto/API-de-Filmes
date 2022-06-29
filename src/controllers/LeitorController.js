@@ -28,8 +28,8 @@ class LeitorController {
             where: { [Op.or]: { imdbID: imdbID, titulo: titulo } },
             attributes: { exclude: ["imdbID"] },
         });
-        if(comentarios.length == 0 && notas.length == 0){
-            return "Especifique o filme com o imdbID ou título"
+        if (comentarios.length == 0 && notas.length == 0) {
+            return "Especifique o filme com o imdbID ou título";
         }
         return { comentarios: comentarios, notas: notas };
     }
@@ -74,25 +74,22 @@ class LeitorController {
                 }
             );
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     static async darNota(req, res) {
         try {
-            if(req.body.nota > 5 || req.body.nota < 0){
-                return res.status(400).send("Nota tem que ser entre 0 e 5")
+            if (req.body.nota > 5 || req.body.nota < 0) {
+                return res.status(400).send("Nota tem que ser entre 0 e 5");
             }
-            const buscaFilmes = await LeitorController._buscarFilmesApi(
-                "",
-                req.query.id
-            );
+            const buscaFilmes = await LeitorController._buscarFilmesApi("", req.query.id);
             const tituloFilme = buscaFilmes.data.Title;
 
             const jaAvaliou = await database.notas.findOne({
                 where: {
                     imdbID: req.query.id,
-                    autor: req.body.autor,
+                    autor: req.user.dataValues.email,
                 },
             });
 
@@ -101,9 +98,9 @@ class LeitorController {
                     titulo: tituloFilme,
                     nota: req.body.nota,
                     imdbID: req.query.id,
-                    autor: req.body.autor,
+                    autor: req.user.dataValues.email,
                 });
-                await LeitorController._atualizaPonto(req.body.autor);
+                await LeitorController._atualizaPonto(req.user.dataValues.email);
                 return res.status(200).json({
                     message: nota,
                 });

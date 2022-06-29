@@ -5,7 +5,7 @@ class AvancadoController {
     static async curtir(req, res) {
         try {
             await existeComentario(req.params.id);
-            await existeUsuario(req.body.votante);
+            await existeUsuario(req.user.dataValues.email);
             const temCurtida = await database.filmes.findOne({
                 where: { id: req.params.id },
                 attributes: ["votantes"],
@@ -23,7 +23,7 @@ class AvancadoController {
                 }
                 await database.filmes.update(
                     {
-                        votantes: `{"usuario":"${req.body.votante}","gostou":"${req.body.gostou}"}`,
+                        votantes: `{"usuario":"${req.user.dataValues.email}","gostou":"${req.body.gostou}"}`,
                     },
                     { where: { id: req.params.id } }
                 );
@@ -33,7 +33,7 @@ class AvancadoController {
 
             let curtidas = temCurtida.votantes;
             curtidas = curtidas.split();
-            const novaCurtida = `{"usuario":"${req.body.votante}","gostou":"${req.body.gostou}"}`;
+            const novaCurtida = `{"usuario":"${req.user.dataValues.email}","gostou":"${req.body.gostou}"}`;
             curtidas.push(novaCurtida);
             curtidas = String(curtidas);
             await database.filmes.update(

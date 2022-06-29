@@ -14,11 +14,11 @@ class BasicoController {
                 titulo: tituloFilme,
                 comentario: req.body.comentario,
                 imdbID: req.query.id,
-                autor: req.body.autor,
+                autor: req.user.dataValues.email,
             });
 
             
-            await LeitorController._atualizaPonto(req.body.autor);
+            await LeitorController._atualizaPonto(req.user.dataValues.email);
 
             return res.status(200).json({
                 message: comentario,
@@ -39,10 +39,10 @@ class BasicoController {
             const resposta = await database.respostas.create({
                 idComentario: Number(req.params.id),
                 resposta: req.body.resposta,
-                autor: req.body.autor,
+                autor: req.user.dataValues.email,
             });
             
-            await LeitorController._atualizaPonto(req.body.autor);
+            await LeitorController._atualizaPonto(req.user.dataValues.email);
             return res.status(200).json({
                 message: resposta,
             });
