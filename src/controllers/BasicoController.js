@@ -53,6 +53,21 @@ class BasicoController {
             return res.status(500).send(error);
         }
     }
+
+    static async verTodasRespostas(req,res){
+        try {
+            const respostas = await database.respostas.findAll({
+                where: { idComentario: req.params.id },
+                attributes: ["resposta"],
+            });
+            let todasRespostas = respostas.map(element=>{
+                return (element.resposta)
+            })
+            return res.status(200).json({"Todas as respostas":todasRespostas})
+        } catch (error) {
+            return res.status(500).send(error);
+        }
+    }
 }
 
 module.exports = BasicoController;

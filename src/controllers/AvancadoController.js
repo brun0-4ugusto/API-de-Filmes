@@ -1,4 +1,4 @@
-const { existeComentario, existeUsuario } = require("../helpers/verificacoes");
+const { existeComentario, existeUsuario, gostou, jaGostou } = require("../helpers/verificacoes");
 const database = require("../models");
 
 class AvancadoController {
@@ -10,28 +10,23 @@ class AvancadoController {
                 where: { id: req.params.id },
                 attributes: ["votantes"],
             });
+
             if (temCurtida.votantes == null) {
-                if (req.body.gostou == "true") {
-                    await database.filmes.update({ gostei: 1 }, { where: { id: req.params.id } });
-                } else if (req.body.gostou == "false") {
-                    await database.filmes.update(
-                        { naoGostei: 1 },
-                        { where: { id: req.params.id } }
-                    );
-                } else {
-                    return res.status(400).send("Parâmetro errado");
-                }
-                await database.filmes.update(
+                await gostou(req.body.gostou, req.params.id);
+
+                const voto = await database.filmes.update(
                     {
                         votantes: `{"usuario":"${req.user.dataValues.email}","gostou":"${req.body.gostou}"}`,
                     },
                     { where: { id: req.params.id } }
                 );
 
-                return res.status(200).send(temCurtida);
+                return res.status(200).send("voto enviado com sucesso");
             }
 
             let curtidas = temCurtida.votantes;
+
+            await jaGostou(curtidas, req.user.dataValues.email, req.body.gostou);
             curtidas = curtidas.split();
             const novaCurtida = `{"usuario":"${req.user.dataValues.email}","gostou":"${req.body.gostou}"}`;
             curtidas.push(novaCurtida);
@@ -65,7 +60,33 @@ class AvancadoController {
                 );
             }
 
-            return res.status(200).send(novaCurtida);
+            return res.status(200).send(curtidas);
+        } catch (error) {
+            return res.status(500).send(error);
+        }
+    }
+
+    static async citar(req, res) {
+        try {
+            const comentarioCitado = await database.filmes.findOne({
+                where: { id: req.params.id },
+                attributes: ["comentario"],
+            });
+            return res.status(200).json({ "Comentario Citado": comentarioCitado.comentario });
+        } catch (error) {
+            return res.status(500).send(error);
+        }
+    }
+
+    static async todasCurtidas(req, res) {
+        try {
+            const curtidas = await database.filmes.findOne({
+                where: { id: req.params.id },
+                attributes: ["gostei", "naoGostei"],
+            });
+            return res
+                .status(200)
+                .json({ Gostei: curtidas.gostei, "Não Gostei": curtidas.naoGostei });
         } catch (error) {
             return res.status(500).send(error);
         }

@@ -8,7 +8,7 @@ module.exports = {
                 {
                     nome: "Bob Esponja",
                     email: "bobsquare@pants.com",
-                    senha: "$2b$12$jHtV4bfWCK8kljwpeLCr8.F.farpa6ahnQ4SpG0vsAuO4NuxEjv2e",
+                    senha: "$2b$12$t5TZG8xSwtrv9n7nc3OqvORWykJa/XWcCCJESAkeOuMTHbgkSJBbi",
                     funcao: "Leitor",
                     pontos: 0,
                     createdAt: new Date(),
@@ -17,7 +17,7 @@ module.exports = {
                 {
                     nome: "Coragem",
                     email: "ocao@covarde.com",
-                    senha: "$2b$12$jHtV4bfWCK8kljwpeLCr8.F.farpa6ahnQ4SpG0vsAuO4NuxEjv2e",
+                    senha: "$2b$12$t5TZG8xSwtrv9n7nc3OqvORWykJa/XWcCCJESAkeOuMTHbgkSJBbi",
                     funcao: "Basico",
                     pontos: 20,
                     createdAt: new Date(),
@@ -26,7 +26,7 @@ module.exports = {
                 {
                     nome: "Patolino da Silva",
                     email: "patolino@looney.com",
-                    senha: "$2b$12$jHtV4bfWCK8kljwpeLCr8.F.farpa6ahnQ4SpG0vsAuO4NuxEjv2e",
+                    senha: "$2b$12$t5TZG8xSwtrv9n7nc3OqvORWykJa/XWcCCJESAkeOuMTHbgkSJBbi",
                     funcao: "Avancado",
                     pontos: 100,
                     createdAt: new Date(),
@@ -35,7 +35,7 @@ module.exports = {
                 {
                     nome: "admin",
                     email: "admin@admin.com",
-                    senha: "$2b$12$jHtV4bfWCK8kljwpeLCr8.F.farpa6ahnQ4SpG0vsAuO4NuxEjv2e",
+                    senha: "$2b$12$t5TZG8xSwtrv9n7nc3OqvORWykJa/XWcCCJESAkeOuMTHbgkSJBbi",
                     funcao: "Moderador",
                     pontos: 1000,
                     createdAt: new Date(),

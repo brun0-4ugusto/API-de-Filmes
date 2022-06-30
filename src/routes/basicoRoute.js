@@ -6,5 +6,6 @@ const middlewares = require('../middlewares/middlewaresAutenticacao')
 
 router.post("/filme/comentario",[middlewares.bearer, middlewares.verificaCargo(middlewares.Basico)], BasicoController.postarComentario);
 router.post("/filme/comentarios/:id", [middlewares.bearer, middlewares.verificaCargo(middlewares.Basico)],BasicoController.responderComentario)
+router.get("/filme/comentarios/:id", [middlewares.bearer, middlewares.verificaCargo(middlewares.Basico)],BasicoController.verTodasRespostas)
 
 module.exports = router;

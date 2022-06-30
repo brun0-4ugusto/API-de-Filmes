@@ -23,10 +23,25 @@ module.exports = {
             throw "Id de comentário inexistente";
         }
     },
-    existeUsuario: async usuario =>{
-        if((await database.usuarios.findOne({where:{email:usuario}})) == null){
-            throw "Usuário não cadastrado"
-            
+    existeUsuario: async (usuario) => {
+        if ((await database.usuarios.findOne({ where: { email: usuario } })) == null) {
+            throw "Usuário não cadastrado";
         }
-    }
+    },
+    gostou: async (gostou, id) => {
+        if (gostou == "true") {
+            await database.filmes.update({ gostei: 1 }, { where: { id: id } });
+        } else if (gostou == "false") {
+            await database.filmes.update({ naoGostei: 1 }, { where: { id: id } });
+        } else {
+            throw "Parâmetro Errado";
+        }
+    },
+    jaGostou: async (curtidas, votante) => {
+        const pattern = new RegExp(`${votante}`);
+        pattern.test(curtidas);
+        if (pattern.test(curtidas)) {
+            throw "Você já reagiu a esse filme";
+        }
+    },
 };
