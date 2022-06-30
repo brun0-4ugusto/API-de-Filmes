@@ -21,7 +21,7 @@ class AvancadoController {
                     { where: { id: req.params.id } }
                 );
 
-                return res.status(200).send("voto enviado com sucesso");
+                return res.status(200).send("Enviado com sucesso");
             }
 
             let curtidas = temCurtida.votantes;
@@ -60,7 +60,7 @@ class AvancadoController {
                 );
             }
 
-            return res.status(200).send(curtidas);
+            return res.status(200).send("Enviado com sucesso");
         } catch (error) {
             return res.status(500).send(error);
         }

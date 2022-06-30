@@ -1,0 +1,597 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API de Filmes",
+        "description": "API  que tem a finalidade de receber e armazenar comentários e notas de filmes.",
+        "version": "0.0.1",
+        "contact": { "name": " Bruno Augusto", "email": "b.augusto1501@gmail.com" },
+        "license": {
+            "name": "GPLv3",
+            "url": "https://www.gnu.org/licenses/quick-guide-gplv3.pt-br.html#:~:text=A%20GPLv3%20ajustou%20a%20defini%C3%A7%C3%A3o,comuns%2C%20como%20Python%20e%20Ruby."
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/",
+            "description": "Api de teste"
+        }
+    ],
+    "paths": {
+        "/usuario": {
+            "post": {
+                "summary": "Cadastra Usuário",
+                "description": "Essa rota faz o cadastro do usuário",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nome": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "senha": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de usuário",
+                                    "value": {
+                                        "nome": "LetsCode",
+                                        "email": "itau@itau.com",
+                                        "senha": "itau@letscode"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Usuário já cadastrado ou valores enviados não correspondem ao mínimo aceito"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "201": {
+                        "description": "Usuário Cadastrado com sucesso"
+                    }
+                }
+            }
+        },
+        "/usuario/login": {
+            "post": {
+                "summary": "Login do Usuário",
+                "description": "Realização do Login do usuário",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "senha": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Usuário Itau": {
+                                    "description": "Exemplo de Login",
+                                    "value": {
+                                        "email": "itau@itau.com",
+                                        "senha": "itau@letscode"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "E-mail ou Senha Incorretos"
+                    },
+                    "500": {
+                        "description": "Erro interno ou não tratado"
+                    },
+                    "204": {
+                        "description": "Login realizado com sucesso"
+                    }
+                }
+            }
+        },
+        "/filme/": {
+            "get": {
+                "summary": "Buscar Filmes",
+                "description": "Busca Filmes na OMDb API (Pelo menos um dos parâmetros deve ser preenchido)",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "default": "tt3896198"
+                        },
+                        "name": "id",
+                        "in": "query",
+                        "description": "IMDb ID",
+                        "required": false
+                    },
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "name": "titulo",
+                        "in": "query",
+                        "description": "Titulo filme -- Exatamente igual ao da OMDb API",
+                        "required": false
+                    },
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "name": "search",
+                        "in": "query",
+                        "description": "Buscar diversos filmes na OMDb API",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informações do filme da OMDb API mais comentários e notas do filme (Se houver cadastrado)"
+                    },
+                    "401": {
+                        "description": "Não Autorizado precisa logar e passar o token"
+                    },
+                    "500": {
+                        "description": "Erro na API"
+                    }
+                }
+            }
+        },
+        "/filme/nota": {
+            "post": {
+                "summary": "Nota",
+                "description": "Essa rota dá nota a um filme",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "default": "tt3896198"
+                        },
+                        "name": "id",
+                        "in": "query",
+                        "description": "IMDb ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nota": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de nota",
+                                    "value": {
+                                        "nota": 4
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Nota já foi cadastrada ou não está entre 0 e 5"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Nota registrada"
+                    }
+                }
+            }
+        },
+        "/filme/comentario": {
+            "post": {
+                "summary": "Postar Comentario",
+                "description": "Essa rota salva um comentario no banco de dados",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "default": "tt3896198"
+                        },
+                        "name": "id",
+                        "in": "query",
+                        "description": "IMDb ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "comentario": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de comentário",
+                                    "value": {
+                                        "comentario": "Um ótimo filme! Adorei!"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Filme não encontrado verifique o imdbID"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Comentário enviado com sucesso"
+                    }
+                }
+            }
+        },
+        "/filme/comentarios/{id}": {
+            "post": {
+                "summary": "Responder um comentario específico",
+                "description": "Essa rota salva a resposta de um comentario no banco de dados",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser respondido",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "resposta": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de resposta",
+                                    "value": {
+                                        "resposta": "Concordo com você!"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Parâmetros enviados errados"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Resposta enviada com sucesso"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Ver todas as respostas de um comentário",
+                "description": "Essa rota traz as respostas de um comentário",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser respondido",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Respostas do banco de dados"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Excluir um comentário",
+                "description": "Excluir um comentário de outro usuário",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 2
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser deletado",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "O comentário foi deletado"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Comentário repetido",
+                "description": "Marca Comentário como repetido",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser marcado como repetido",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "O comentário foi marcado"
+                    }
+                }
+            }
+        },
+        "/filme/{id}": {
+            "post": {
+                "summary": "Curtir um comentário",
+                "description": "Marcar um comentário como gostei ou não gostei",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a curtido",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "gostou": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de curtida",
+                                    "value": {
+                                        "gostou": "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Parâmetros enviados errados"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Curtida enviada com sucesso"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Citar comentário",
+                "description": "Cita um comentário específico",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser citado",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Comentário citado"
+                    }
+                }
+            }
+        },
+        "/filme/curtidas/{id}": {
+            "get": {
+                "summary": "Ver likes",
+                "description": "Traz as curtidas e descurtidas de um comentário",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do comentário a ser citado",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "Curtidas do Comentário"
+                    }
+                }
+            }
+        },
+        "/moderador": {
+            "post": {
+                "summary": "Moderador",
+                "description": "Transforma o usuário informado em moderador",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "itau": {
+                                    "description": "Exemplo de mudança de cargo para moderador",
+                                    "value": {
+                                        "email": "itau@itau.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Não tem permissões suficientes"
+                    },
+                    "500": {
+                        "description": "Erro não tratado"
+                    },
+                    "200": {
+                        "description": "O usuário foi incluído como moderador"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
