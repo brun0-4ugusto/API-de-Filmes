@@ -30,7 +30,7 @@ Quando vamos assistir um filme é comum pedirmos indicações. Queremos saber o 
         -   2 comentários de filmes
         -   2 notas de filmes
         -   1 resposta à comentários
-    -   O projeto conta ainda com o **_Swagger_** para documentar e testar melhor os endpoints ele pode ser acessado em **/api-docs/**
+    -   O projeto conta ainda com o **_Swagger_** para documentar e testar melhor os endpoints ele pode ser acessado na rota **/api-docs/**
 
 ## Endpoints da API:
 
