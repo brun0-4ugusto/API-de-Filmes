@@ -23,7 +23,7 @@ Quando vamos assistir um filme é comum pedirmos indicações. Queremos saber o 
     -   Baixe todas as dependências
     -   Dê um **npm start** (essa api está configurada para a porta 4000)
     -   Dentro da pasta config tem o arquivo **config.json**, lá está a configuração de como é feita a conexão com o banco de dados, por motivos de teste o usuário é root e a senha é 1234, o nome da database é sistema_filmes, rodando no localhost com a porta padão.
-    -   Com o sequelize cli é possível criar essa database (sistema_filmes), para isso (com o usuário root e senha 1234 - caso seja diferente o arquivo config deve ser alterado - ) digite no terminal do VSCODE ou de outro editor o comando **npx sequelize-cli db:create**.
+    -   Com o sequelize cli é possível criar essa database (sistema_filmes), para isso (com o usuário root e senha 1234 - caso seja diferente, o arquivo config deve ser alterado - ) digite no terminal do VSCODE, ou de outro editor, o comando **npx sequelize-cli db:create**.
     -   Criada a database com sucesso, é necessário criar as tabelas para isso, digite no terminal **npx sequelize-cli db:migrate**
     -   É possível criar alguns dados falsos nas tabelas para facilitar os testes com o comando **npx sequelize-cli db:seed:all**, esses dados abrangem:
         -   4 Usuários, um de cada tipo, (visando facilitar os testes de permissões), todos com a senha **41512531**
