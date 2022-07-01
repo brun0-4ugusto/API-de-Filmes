@@ -19,7 +19,7 @@ Quando vamos assistir um filme é comum pedirmos indicações. Queremos saber o 
     -   Clone o repositório
     -   Baixe todas as dependências
     -   Dê um **npm start** (essa api está configurada para a porta 3000)
-    -   Clone o repositório da API de Login <https://github.com/brun0-4ugusto/API-de-autoriza-o-de-login>
+    -   Clone o repositório da API de Login <https://github.com/brun0-4ugusto/API-de-autorizacao-de-login>
     -   Baixe todas as dependências
     -   Dê um **npm start** (essa api está configurada para a porta 4000)
     -   Dentro da pasta config tem o arquivo **config.json**, lá está a configuração de como é feita a conexão com o banco de dados, por motivos de teste o usuário é root e a senha é 1234, o nome da database é sistema_filmes, rodando no localhost com a porta padão.
